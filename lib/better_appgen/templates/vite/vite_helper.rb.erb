@@ -1,0 +1,122 @@
+# app/helpers/vite_helper.rb
+module ViteHelper
+  VITE_MANIFEST_PATH = Rails.root.join("public/assets/.vite/manifest.json")
+  VITE_DEV_SERVER_URL = ENV.fetch("VITE_DEV_SERVER_URL", "http://localhost:<%= vite_port %>")
+
+  def vite_development?
+    Rails.env.development? && vite_dev_server_running?
+  end
+
+  def vite_dev_server_running?
+    return @vite_dev_server_running if defined?(@vite_dev_server_running)
+
+    @vite_dev_server_running = begin
+      require "net/http"
+      require "uri"
+
+      uri = URI("#{VITE_DEV_SERVER_URL}/")
+      response = Net::HTTP.get_response(uri)
+      # Accept any HTTP response (200, 404, etc.) as it means the server is running
+      true
+    rescue StandardError
+      false
+    end
+  end
+
+  def vite_manifest
+    return {} if vite_development?
+
+    @vite_manifest ||= begin
+      JSON.parse(File.read(VITE_MANIFEST_PATH))
+    rescue Errno::ENOENT
+      Rails.logger.error "Vite manifest not found at #{VITE_MANIFEST_PATH}"
+      raise "Vite manifest not found. Run 'yarn build' to generate assets."
+    rescue JSON::ParserError => e
+      Rails.logger.error "Invalid Vite manifest: #{e.message}"
+      raise "Invalid Vite manifest format"
+    end
+  end
+
+  def vite_asset_path(entry_name)
+    if vite_development?
+      # In development, serve assets directly from Vite dev server
+      base_url = Rails.application.config.asset_host || VITE_DEV_SERVER_URL
+      case entry_name
+      when "application.js"
+        "#{base_url}/app/assets/javascripts/application.js"
+      when "application.css"
+        "#{base_url}/app/assets/stylesheets/application.css"
+      else
+        "#{base_url}/#{entry_name}"
+      end
+    else
+      # In production, use manifest with asset_host
+      manifest_key = case entry_name
+      when "application.js"
+        "app/assets/javascripts/application.js"
+      when "application.css"
+        "app/assets/stylesheets/application.css"
+      else
+        entry_name
+      end
+
+      asset = vite_manifest[manifest_key] or raise "Vite entry '#{entry_name}' not found in manifest"
+
+      # Use asset_host if configured, otherwise relative path
+      if Rails.application.config.asset_host
+        "#{Rails.application.config.asset_host}/assets/#{asset["file"]}"
+      else
+        "/assets/#{asset["file"]}"
+      end
+    end
+  end
+
+  def vite_javascript_include_tag(entry_name, **options)
+    path = vite_asset_path(entry_name)
+    default_options = { type: "module", defer: true, crossorigin: "anonymous" }
+    javascript_include_tag(path, **default_options.merge(options))
+  end
+
+  def vite_stylesheet_link_tag(entry_name, **options)
+    if vite_development?
+      # In development, CSS is handled by Vite dev server through JS imports
+      # Return empty string as CSS will be injected by Vite
+      ""
+    else
+      # In production, use manifest
+      manifest_key = case entry_name
+      when "application.js"
+        "app/assets/javascripts/application.js"
+      when "application.css"
+        "app/assets/stylesheets/application.css"
+      else
+        entry_name
+      end
+
+      asset = vite_manifest[manifest_key] or raise "Vite entry '#{entry_name}' not found in manifest"
+
+      # If it's a direct CSS file
+      if manifest_key.include?("stylesheets") || asset["file"].end_with?(".css")
+        css_path = if Rails.application.config.asset_host
+          "#{Rails.application.config.asset_host}/assets/#{asset["file"]}"
+        else
+          "/assets/#{asset["file"]}"
+        end
+        stylesheet_link_tag(css_path, **{ media: "all" }.merge(options))
+      else
+        # If it's a JS entry that might have associated CSS
+        ""
+      end
+    end
+  end
+
+  # Utility method to invalidate manifest cache
+  def reset_vite_manifest_cache!
+    @vite_manifest = nil
+  end
+
+  # Utility method to invalidate dev server cache
+  def reset_vite_dev_server_cache!
+    @vite_dev_server_running = nil
+  end
+end

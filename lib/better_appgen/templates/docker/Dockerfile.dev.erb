@@ -1,0 +1,58 @@
+# syntax=docker/dockerfile:1
+# check=error=true
+
+ARG RUBY_VERSION=3.4.3
+FROM docker.io/library/ruby:$RUBY_VERSION-slim-bookworm AS base
+
+ARG NODE_VERSION=24.1.0
+# Yarn version managed via Corepack + packageManager field in package.json
+
+# Setup workdir
+RUN mkdir /app
+WORKDIR /app
+
+# Setup ENV
+ENV PORT=<%= rails_port %>
+ENV BUNDLE_PATH=/bundle
+ENV BUNDLE_BIN=/bundle/bin
+ENV GEM_HOME=/bundle
+ENV PATH="${BUNDLE_BIN}:${PATH}"
+ENV PATH="/usr/local/node/bin:$PATH"
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV LANGUAGE=C.UTF-8
+
+# System dependencies
+RUN apt-get update  \
+    && apt-get upgrade -y  \
+    && apt-get install -y lsb-release curl imagemagick libpq5 libjemalloc2 \
+    && install -d /usr/share/postgresql-common/pgdg \
+    && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    && sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+    && apt update \
+    && apt-get install -y build-essential curl libxslt-dev libxml2-dev libpq-dev libjemalloc-dev libyaml-dev git postgresql-client-16 \
+    && curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz -C /tmp/ \
+    && /tmp/node-build-master/bin/node-build "${NODE_VERSION}" /usr/local/node \
+    && corepack enable \
+    && rm -rf /tmp/node-build-master \
+    && rm -rf /var/lib/apt/lists/*
+
+# Jemalloc setup
+RUN ln -s /usr/lib/*/libjemalloc.so.2 /usr/lib/libjemalloc.so.2
+ENV LD_PRELOAD="/usr/lib/libjemalloc.so.2"
+ENV MALLOC_CONF="dirty_decay_ms:1000,narenas:2,background_thread:true"
+ENV RUBY_YJIT_ENABLE="1"
+
+# Update gems
+RUN gem update --system \
+    && gem install bundler -v '=2.7.1' \
+    && gem cleanup
+
+# Setup entrypoint
+COPY bin/docker-entrypoint /app/bin/docker-entrypoint
+RUN chmod +x /app/bin/docker-entrypoint
+ENTRYPOINT ["/app/bin/docker-entrypoint"]
+
+# Start the main process.
+EXPOSE ${PORT}
+CMD ["sh", "-c", "./bin/rails server -b 0.0.0.0 -p ${PORT:-<%= rails_port %>}"]

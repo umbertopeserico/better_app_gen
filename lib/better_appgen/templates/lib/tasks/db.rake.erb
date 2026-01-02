@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+namespace :db do
+  at_exit do
+    # Dynamically read database configuration for current environment
+    db_config = Rails.application.config.database_configuration[Rails.env]
+
+    # Generate structure file names based on configured databases
+    structure_files = db_config.keys.map do |db_name|
+      case db_name
+      when "primary"
+        "structure.sql"
+      else
+        "#{db_name}_structure.sql"
+      end
+    end
+
+    # Process all database structure files
+    structure_files.each do |filename|
+      schema_filename = Rails.root.join("db", filename)
+
+      next unless File.exist?(schema_filename)
+
+      schema = File.readlines(schema_filename, chomp: true).grep_v(/--/)
+      File.open(schema_filename, "w") { |file| file.puts schema }
+    end
+  end
+end

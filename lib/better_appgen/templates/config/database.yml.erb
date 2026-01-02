@@ -1,0 +1,65 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  schema_search_path: "public,shared"
+  pool: <%%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  primary: &primary_development
+    <<: *default
+    url: <%%= ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_development
+  cache:
+    <<: *primary_development
+    url: <%%= ENV['CACHE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_development_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_development
+    url: <%%= ENV['QUEUE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_development_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_development
+    url: <%%= ENV['CABLE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_development_cable
+    migrations_paths: db/cable_migrate
+
+test:
+  primary: &primary_test
+    <<: *default
+    url: <%%= ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_test
+  cache:
+    <<: *primary_test
+    url: <%%= ENV['CACHE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_test_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_test
+    url: <%%= ENV['QUEUE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_test_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_test
+    url: <%%= ENV['CABLE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_test_cable
+    migrations_paths: db/cable_migrate
+
+production:
+  primary: &primary_production
+    <<: *default
+    url: <%%= ENV['DATABASE_URL'] %>
+    database: <%= app_name_snake %>_production
+  cache:
+    <<: *primary_production
+    url: <%%= ENV['CACHE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    url: <%%= ENV['QUEUE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    url: <%%= ENV['CABLE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
+    migrations_paths: db/cable_migrate

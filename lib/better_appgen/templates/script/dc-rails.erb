@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Open Rails console in a new container
+set -e
+
+echo "Opening Rails console..."
+echo "Type 'exit' to leave the console"
+
+docker compose run --rm puma bin/rails console

@@ -1,0 +1,35 @@
+# Gem build artifacts
+*.gem
+pkg/
+
+# Bundler
+.bundle/
+vendor/bundle/
+
+# RSpec
+.rspec_status
+
+# IDE/Editor
+.ruby-lsp/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+doc/
+.yardoc/
+
+# Temporary files
+tmp/
+log/
+
+# Test coverage
+coverage/
+
+# Test generated apps
+test-generated-app/
+test-app/
+
+# macOS
+.DS_Store

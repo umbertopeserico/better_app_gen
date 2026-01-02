@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Attach to a service's TTY for debugging
+# Usage: script/dc-attach [service_name]
+# Default: puma
+set -e
+
+SERVICE=${1:-puma}
+
+echo "Attaching to $SERVICE container..."
+echo "Use Ctrl+P Ctrl+Q to detach without stopping"
+echo "Use Ctrl+C to send interrupt signal (for debugger)"
+
+docker compose attach $SERVICE

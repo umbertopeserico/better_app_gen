@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Show last N lines of logs
+# Usage: script/dc-logs-tail [service_name] [lines]
+# Default: 100 lines from all services
+set -e
+
+SERVICE=$1
+LINES=${2:-100}
+
+if [ -z "$SERVICE" ]; then
+  echo "Showing last $LINES lines from all services..."
+  docker compose logs --tail=$LINES
+else
+  echo "Showing last $LINES lines from $SERVICE..."
+  docker compose logs --tail=$LINES $SERVICE
+fi

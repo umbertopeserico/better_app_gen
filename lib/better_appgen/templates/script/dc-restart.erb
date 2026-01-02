@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Restart all services
+set -e
+
+echo "Restarting services..."
+docker compose down
+docker compose up -d
+
+echo "Services restarted successfully!"
+echo "Rails app: http://localhost:<%= rails_port %>"
+echo "Vite HMR: http://localhost:<%= vite_port %>"

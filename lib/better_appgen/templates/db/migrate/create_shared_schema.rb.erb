@@ -1,0 +1,31 @@
+# This migration creates a 'shared' schema in PostgreSQL
+# Use this schema for tables that need to be accessed across different contexts
+# Examples: lookup tables, configurations, multi-tenant shared data
+class CreateSharedSchema < ActiveRecord::Migration[8.0]
+  def up
+    # Create the shared schema if it doesn't exist
+    execute "CREATE SCHEMA IF NOT EXISTS shared"
+
+    # Grant usage permissions to the current database user
+    # This ensures the application can access tables in the shared schema
+    execute "GRANT USAGE ON SCHEMA shared TO CURRENT_USER"
+    execute "GRANT CREATE ON SCHEMA shared TO CURRENT_USER"
+
+    # Optional: Add shared schema to search_path for easier access
+    # Uncomment if you want shared schema tables accessible without schema prefix
+    # execute <<-SQL
+    #   ALTER DATABASE #{connection.current_database}
+    #   SET search_path TO "$user", public, shared;
+    # SQL
+
+    Rails.logger.info "Created 'shared' schema successfully"
+  end
+
+  def down
+    # Drop the shared schema and all its contents
+    # CASCADE will drop all tables, views, and other objects in the schema
+    execute "DROP SCHEMA IF EXISTS shared CASCADE"
+
+    Rails.logger.info "Dropped 'shared' schema"
+  end
+end

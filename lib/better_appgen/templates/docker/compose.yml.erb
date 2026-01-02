@@ -1,0 +1,86 @@
+services:
+  puma: &puma
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.dev
+    container_name: <%= app_name_dash %>_puma
+    env_file:
+      - .env.docker
+    environment:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_SESSION_TOKEN:
+    ports:
+      - "<%= rails_port %>:3000"
+      - "<%= vite_port %>:5173"
+    stdin_open: true
+    tty: true
+    networks:
+      default:
+        aliases:
+          - puma
+      pandev-multi-app_postgres-network:
+        aliases:
+          - <%= app_name_dash %>_puma
+      pandev-multi-app_dapr-network:
+        aliases:
+          - <%= app_name_dash %>_puma
+    volumes:
+      - <%= app_name_snake %>_bash_history:/root/hist
+      - <%= app_name_snake %>_bundle:/bundle
+      - <%= app_name_snake %>_node_modules:/app/node_modules
+      - /app/tmp
+      - ./:/app/
+      - ./.psqlrc:/root/.psqlrc:ro
+
+  vite:
+    <<: *puma
+    container_name: <%= app_name_dash %>_vite
+    command: yarn dev
+    ports: []
+    networks: []
+    network_mode: "service:puma"
+
+  # Dapr sidecar for the Rails application
+  puma-dapr:
+    image: daprio/daprd:1.15.0
+    container_name: <%= app_name_dash %>_dapr
+    command: [
+      "./daprd",
+      "--app-id", "<%= app_name_dash %>",
+      "--app-port", "3000",
+      "--app-protocol", "http",
+      "--placement-host-address", "dapr-placement:50006",
+      "--scheduler-host-address", "dapr-scheduler:50007",
+      "--dapr-http-port", "3500",
+      "--dapr-grpc-port", "50001",
+      "--resources-path", "/dapr/components",
+      "--config", "/dapr/config/config.yaml",
+      "--log-level", "info",
+      "--enable-api-logging"
+    ]
+    volumes:
+      - ../../dapr/components:/dapr/components:ro
+      - ../../dapr/config:/dapr/config:ro
+    depends_on:
+      - puma
+    network_mode: "service:puma"
+    environment:
+      - DAPR_HTTP_PORT=3500
+      - DAPR_GRPC_PORT=50001
+
+networks:
+  default:
+    driver: bridge
+    name: <%= app_name_dash %>_network
+  pandev-multi-app_postgres-network:
+    external: true
+  pandev-multi-app_dapr-network:
+    external: true
+
+volumes:
+  <%= app_name_snake %>_bash_history:
+  <%= app_name_snake %>_bundle:
+  <%= app_name_snake %>_node_modules:
+  smtp4dev_data:
+  postgres_bash_history:

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Open a bash shell in a container using docker compose run
+# Usage: script/dc-shell [service_name]
+# Default: puma
+set -e
+
+SERVICE=${1:-puma}
+
+echo "Opening bash shell in $SERVICE container..."
+echo "Type 'exit' to leave the shell"
+
+docker compose run --rm $SERVICE bash

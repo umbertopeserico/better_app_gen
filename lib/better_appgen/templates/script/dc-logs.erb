@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Follow logs from services
+# Usage: script/dc-logs [service_name]
+# If no service specified, shows logs from all services
+set -e
+
+SERVICE=$1
+
+if [ -z "$SERVICE" ]; then
+  echo "Following logs from all services..."
+  echo "Press Ctrl+C to exit"
+  docker compose logs -f
+else
+  echo "Following logs from $SERVICE..."
+  echo "Press Ctrl+C to exit"
+  docker compose logs -f $SERVICE
+fi
