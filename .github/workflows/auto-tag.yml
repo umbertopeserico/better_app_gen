@@ -34,6 +34,8 @@ jobs:
 
   release:
     needs: tag
+    permissions:
+      contents: write
     uses: ./.github/workflows/release.yml
     with:
       version: ${{ needs.tag.outputs.version }}
