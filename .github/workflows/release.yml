@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Verify version consistency
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          GEM_VERSION=$(ruby -r ./lib/better_appgen/version -e "puts BetterAppgen::VERSION")
+          echo "Tag version: $TAG_VERSION"
+          echo "Gem version: $GEM_VERSION"
+          if [ "$TAG_VERSION" != "$GEM_VERSION" ]; then
+            echo "::error::Version mismatch: tag=$TAG_VERSION, gem=$GEM_VERSION"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: bundle exec rspec
+
+      - name: Build gem
+        run: gem build better_appgen.gemspec
+
+      - name: Publish to RubyGems
+        run: |
+          mkdir -p $HOME/.gem
+          echo -e "---\n:rubygems_api_key: ${{ secrets.RUBYGEMS_API_KEY }}" > $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          gem push better_appgen-*.gem
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: better_appgen-*.gem
+          generate_release_notes: true

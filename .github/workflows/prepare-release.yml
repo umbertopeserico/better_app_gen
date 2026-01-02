@@ -1,0 +1,76 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.2.0)'
+        required: true
+        type: string
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate version format
+        run: |
+          if ! echo "${{ inputs.version }}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Invalid version format. Use semantic versioning (e.g., 0.2.0)"
+            exit 1
+          fi
+
+      - name: Create release branch
+        run: |
+          git checkout -b release/v${{ inputs.version }}
+
+      - name: Update version.rb
+        run: |
+          sed -i 's/VERSION = "[^"]*"/VERSION = "${{ inputs.version }}"/' lib/better_appgen/version.rb
+
+      - name: Update CHANGELOG.md
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [${{ inputs.version }}] - $DATE/" CHANGELOG.md || true
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: prepare release v${{ inputs.version }}"
+
+      - name: Push branch
+        run: |
+          git push origin release/v${{ inputs.version }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/v${{ inputs.version }}
+          base: main
+          title: "Release v${{ inputs.version }}"
+          body: |
+            ## Release v${{ inputs.version }}
+
+            This PR prepares the release of version ${{ inputs.version }}.
+
+            ### Checklist
+            - [ ] Version updated in `lib/better_appgen/version.rb`
+            - [ ] CHANGELOG.md updated
+            - [ ] All tests passing
+
+            ### After merging
+            Create and push the tag to trigger the release:
+            ```bash
+            git checkout main && git pull
+            git tag v${{ inputs.version }}
+            git push origin v${{ inputs.version }}
+            ```
+          delete-branch: false
