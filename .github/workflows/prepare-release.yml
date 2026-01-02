@@ -66,11 +66,5 @@ jobs:
             - [ ] CHANGELOG.md updated
             - [ ] All tests passing
 
-            ### After merging
-            Create and push the tag to trigger the release:
-            ```bash
-            git checkout main && git pull
-            git tag v${{ inputs.version }}
-            git push origin v${{ inputs.version }}
-            ```
-          delete-branch: false
+            **After merging**: Tag is created automatically → RubyGems publish triggered
+          delete-branch: true

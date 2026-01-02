@@ -18,15 +18,8 @@ This creates a PR with:
 ### 2. Review and Merge
 Review the PR and merge to main.
 
-### 3. Tag and Publish
-```bash
-git checkout main && git pull
-git tag v0.2.0
-git push origin v0.2.0
-```
-
-The release workflow automatically:
-- Verifies version consistency
-- Runs tests
-- Publishes to RubyGems
-- Creates GitHub Release
+That's it! After merge:
+1. Tag is created automatically
+2. Tests run
+3. Gem is published to RubyGems
+4. GitHub Release is created
