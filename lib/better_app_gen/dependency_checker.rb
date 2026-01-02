@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "English"
-module BetterAppgen
+module BetterAppGen
   # Checks for required system dependencies
   class DependencyChecker
     REQUIRED_DEPENDENCIES = {

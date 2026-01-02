@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Sets up database configuration and migrations
     class Database < Base

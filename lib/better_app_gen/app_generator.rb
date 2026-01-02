@@ -3,7 +3,7 @@
 require "tty-spinner"
 require "pastel"
 
-module BetterAppgen
+module BetterAppGen
   # Main orchestrator for generating a complete Rails application
   class AppGenerator
     attr_reader :config, :pastel

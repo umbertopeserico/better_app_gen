@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Configures the Gemfile with required gems
     class Gemfile < Base

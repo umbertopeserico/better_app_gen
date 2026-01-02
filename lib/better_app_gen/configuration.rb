@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   # Immutable configuration object holding all options for app generation
   class Configuration
     attr_reader :app_name, :rails_port, :vite_port, :locale, :with_simple_form, :skip_docker, :app_path,

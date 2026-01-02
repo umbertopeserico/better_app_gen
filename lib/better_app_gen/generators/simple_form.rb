@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Configures SimpleForm with Tailwind CSS styling
     class SimpleForm < Base
@@ -20,7 +20,7 @@ module BetterAppgen
 
       def create_locale_file
         template_name = "config/locales/simple_form.#{locale}.yml.erb"
-        template_path = BetterAppgen.templates_path.join(template_name)
+        template_path = BetterAppGen.templates_path.join(template_name)
         return unless template_path.exist?
 
         create_file_from_template(

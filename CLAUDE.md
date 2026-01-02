@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-BetterAppgen is a Ruby gem that generates Rails 8 applications with an opinionated, production-ready stack. It creates apps with Solid Stack (Cache, Queue, Cable backed by PostgreSQL), Vite 7 + Tailwind CSS 4, multi-database architecture, UUID primary keys, and Docker support.
+BetterAppGen is a Ruby gem that generates Rails 8 applications with an opinionated, production-ready stack. It creates apps with Solid Stack (Cache, Queue, Cable backed by PostgreSQL), Vite 7 + Tailwind CSS 4, multi-database architecture, UUID primary keys, and Docker support.
 
 ## Commands
 
@@ -25,25 +25,25 @@ bundle exec rubocop
 bundle exec rubocop -A
 
 # Test the CLI locally
-bundle exec bin/better_appgen new test-app --skip-docker
+bundle exec bin/better_app_gen new test-app --skip-docker
 
 # Check dependencies
-bundle exec bin/better_appgen check
+bundle exec bin/better_app_gen check
 ```
 
 ## Architecture
 
 ### Entry Points
-- `exe/better_appgen` - CLI executable
-- `lib/better_appgen.rb` - Main module, loads all components
+- `exe/better_app_gen` - CLI executable
+- `lib/better_app_gen.rb` - Main module, loads all components
 
 ### Core Components
-- `lib/better_appgen/cli.rb` - Thor-based CLI with `new`, `check`, `version` commands
-- `lib/better_appgen/configuration.rb` - Immutable config object, validates app name, ports, locale
-- `lib/better_appgen/app_generator.rb` - Orchestrator that runs generators in sequence
-- `lib/better_appgen/dependency_checker.rb` - Validates Ruby, Rails, Node, Yarn, Git, PostgreSQL versions
+- `lib/better_app_gen/cli.rb` - Thor-based CLI with `new`, `check`, `version` commands
+- `lib/better_app_gen/configuration.rb` - Immutable config object, validates app name, ports, locale
+- `lib/better_app_gen/app_generator.rb` - Orchestrator that runs generators in sequence
+- `lib/better_app_gen/dependency_checker.rb` - Validates Ruby, Rails, Node, Yarn, Git, PostgreSQL versions
 
-### Generators (`lib/better_appgen/generators/`)
+### Generators (`lib/better_app_gen/generators/`)
 Each generator inherits from `Base` and implements `generate!`:
 - `rails_app.rb` - Creates base Rails app with `rails new`
 - `gemfile.rb` - Adds gems (solid_cache, solid_queue, solid_cable, vite_rails, etc.)
@@ -55,7 +55,7 @@ Each generator inherits from `Base` and implements `generate!`:
 - `docker.rb` - Docker development environment
 - `simple_form.rb` - Optional SimpleForm with Tailwind
 
-### Templates (`lib/better_appgen/templates/`)
+### Templates (`lib/better_app_gen/templates/`)
 ERB templates organized by destination path. Access config values via `@config` binding.
 
 ## Key Patterns

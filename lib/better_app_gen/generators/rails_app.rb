@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Creates the base Rails application with optimized skip flags
     class RailsApp < Base

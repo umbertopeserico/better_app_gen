@@ -4,8 +4,9 @@ require "English"
 require "erb"
 require "fileutils"
 require "json"
+require "securerandom"
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Base class for all generators with ERB template support
     class Base
@@ -37,7 +38,7 @@ module BetterAppgen
 
       # Returns the templates directory path
       def templates_path
-        BetterAppgen.templates_path
+        BetterAppGen.templates_path
       end
 
       # Reads and renders an ERB template file

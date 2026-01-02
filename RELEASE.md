@@ -12,7 +12,7 @@ Get your API key from https://rubygems.org/profile/api_keys
 Go to **Actions → Prepare Release → Run workflow** and enter the version (e.g., `0.2.0`)
 
 This creates a PR with:
-- Updated `lib/better_appgen/version.rb`
+- Updated `lib/better_app_gen/version.rb`
 - Updated `CHANGELOG.md`
 
 ### 2. Review and Merge

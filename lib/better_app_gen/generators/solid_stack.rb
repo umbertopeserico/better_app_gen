@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Configures Solid Stack (Cache, Queue, Cable) in application.rb
     class SolidStack < Base

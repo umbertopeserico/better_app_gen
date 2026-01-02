@@ -4,7 +4,7 @@ require "thor"
 require "pastel"
 require "tty-spinner"
 
-module BetterAppgen
+module BetterAppGen
   # CLI class for handling command-line interactions
   class CLI < Thor
     def self.exit_on_failure?
@@ -23,11 +23,11 @@ module BetterAppgen
       - Configurable locale and timezone
 
       Examples:
-        better_appgen new my-blog
-        better_appgen new my-app --with-simple-form
-        better_appgen new my-app --rails-port 3001 --vite-port 5174
-        better_appgen new my-app --skip-docker
-        better_appgen new my-app --locale it
+        better_app_gen new my-blog
+        better_app_gen new my-app --with-simple-form
+        better_app_gen new my-app --rails-port 3001 --vite-port 5174
+        better_app_gen new my-app --skip-docker
+        better_app_gen new my-app --locale it
     LONGDESC
     method_option :with_simple_form, type: :boolean, default: false,
                                      desc: "Include SimpleForm with Tailwind CSS styling"
@@ -112,9 +112,9 @@ module BetterAppgen
       checker.check_all(verbose: true)
     end
 
-    desc "version", "Show better_appgen version"
+    desc "version", "Show better_app_gen version"
     def version
-      puts "better_appgen v#{VERSION}"
+      puts "better_app_gen v#{VERSION}"
     end
 
     # Version aliases

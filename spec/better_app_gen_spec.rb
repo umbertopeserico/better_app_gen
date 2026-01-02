@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe BetterAppgen do
+RSpec.describe BetterAppGen do
   it "has a version number" do
-    expect(BetterAppgen::VERSION).not_to be_nil
+    expect(BetterAppGen::VERSION).not_to be_nil
   end
 
   describe ".root" do
@@ -11,7 +11,7 @@ RSpec.describe BetterAppgen do
     end
 
     it "points to the gem root directory" do
-      expect(described_class.root.join("lib", "better_appgen.rb")).to exist
+      expect(described_class.root.join("lib", "better_app_gen.rb")).to exist
     end
   end
 

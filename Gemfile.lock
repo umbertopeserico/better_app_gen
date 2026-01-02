@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    better_appgen (0.1.0)
+    better_app_gen (0.1.0)
       pastel (~> 0.8)
       thor (~> 1.3)
       tty-spinner (~> 0.9)
@@ -80,8 +80,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  better_appgen!
-  bundler (~> 2.0)
+  better_app_gen!
   rake (~> 13.0)
   rspec (~> 3.12)
   rubocop (~> 1.57)

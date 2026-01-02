@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module BetterAppgen
-  # Base error class for all BetterAppgen errors
+module BetterAppGen
+  # Base error class for all BetterAppGen errors
   class Error < StandardError; end
 
   # Raised when a required dependency is missing

@@ -1,4 +1,4 @@
-# BetterAppgen
+# BetterAppGen
 
 Generate Rails 8 applications with an opinionated, production-ready stack.
 
@@ -17,7 +17,7 @@ Generate Rails 8 applications with an opinionated, production-ready stack.
 ## Installation
 
 ```bash
-gem install better_appgen
+gem install better_app_gen
 ```
 
 ## Usage
@@ -26,34 +26,34 @@ gem install better_appgen
 
 ```bash
 # Basic usage (English locale, default ports)
-better_appgen new my-app
+better_app_gen new my-app
 
 # With SimpleForm
-better_appgen new my-app --with-simple-form
+better_app_gen new my-app --with-simple-form
 
 # With Italian locale
-better_appgen new my-app --locale it
+better_app_gen new my-app --locale it
 
 # Custom ports
-better_appgen new my-app --rails-port 3001 --vite-port 5174
+better_app_gen new my-app --rails-port 3001 --vite-port 5174
 
 # Skip Docker
-better_appgen new my-app --skip-docker
+better_app_gen new my-app --skip-docker
 
 # Combine options
-better_appgen new my-app --with-simple-form --locale it --rails-port 3001
+better_app_gen new my-app --with-simple-form --locale it --rails-port 3001
 ```
 
 ### Check Dependencies
 
 ```bash
-better_appgen check
+better_app_gen check
 ```
 
 ### View Version
 
 ```bash
-better_appgen version
+better_app_gen version
 ```
 
 ## Options
@@ -148,8 +148,8 @@ bin/dev              # Start Rails + Vite
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests.
 
 ```bash
-git clone https://github.com/pandev-srl/better_appgen.git
-cd better_appgen
+git clone https://github.com/pandev-srl/better_app_gen.git
+cd better_app_gen
 bin/setup
 rake spec
 ```
@@ -158,7 +158,7 @@ To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/pandev-srl/better_appgen.
+Bug reports and pull requests are welcome on GitHub at https://github.com/pandev-srl/better_app_gen.
 
 ## License
 

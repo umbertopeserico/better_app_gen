@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Sets up Docker development environment
     class Docker < Base
@@ -41,7 +41,7 @@ module BetterAppgen
 
         scripts.each do |script|
           template_name = "script/#{script}.erb"
-          template_path = BetterAppgen.templates_path.join(template_name)
+          template_path = BetterAppGen.templates_path.join(template_name)
           next unless template_path.exist?
 
           create_file_from_template("script/#{script}", template_name)

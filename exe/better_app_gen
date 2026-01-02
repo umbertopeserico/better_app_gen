@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "better_app_gen"
+
+BetterAppGen::CLI.start(ARGV)

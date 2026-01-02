@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe BetterAppgen::Configuration do
+RSpec.describe BetterAppGen::Configuration do
   describe "#initialize" do
     it "creates a valid configuration with default values" do
       config = described_class.new(app_name: "my-app")
@@ -33,31 +33,31 @@ RSpec.describe BetterAppgen::Configuration do
     context "with invalid app name" do
       it "raises InvalidAppNameError for names starting with number" do
         expect { described_class.new(app_name: "123app") }
-          .to raise_error(BetterAppgen::InvalidAppNameError)
+          .to raise_error(BetterAppGen::InvalidAppNameError)
       end
 
       it "raises InvalidAppNameError for names with special characters" do
         expect { described_class.new(app_name: "my@app") }
-          .to raise_error(BetterAppgen::InvalidAppNameError)
+          .to raise_error(BetterAppGen::InvalidAppNameError)
       end
     end
 
     context "with invalid locale" do
       it "raises Error for unsupported locale" do
         expect { described_class.new(app_name: "my-app", locale: "xx") }
-          .to raise_error(BetterAppgen::Error, /Unsupported locale/)
+          .to raise_error(BetterAppGen::Error, /Unsupported locale/)
       end
     end
 
     context "with invalid ports" do
       it "raises Error for port below 1024" do
         expect { described_class.new(app_name: "my-app", rails_port: 80) }
-          .to raise_error(BetterAppgen::Error, /Rails port must be between/)
+          .to raise_error(BetterAppGen::Error, /Rails port must be between/)
       end
 
       it "raises Error when ports are the same" do
         expect { described_class.new(app_name: "my-app", rails_port: 3000, vite_port: 3000) }
-          .to raise_error(BetterAppgen::Error, /must be different/)
+          .to raise_error(BetterAppGen::Error, /must be different/)
       end
     end
   end

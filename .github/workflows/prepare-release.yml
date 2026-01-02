@@ -31,7 +31,7 @@ jobs:
 
       - name: Update version.rb
         run: |
-          sed -i 's/VERSION = "[^"]*"/VERSION = "${{ inputs.version }}"/' lib/better_appgen/version.rb
+          sed -i 's/VERSION = "[^"]*"/VERSION = "${{ inputs.version }}"/' lib/better_app_gen/version.rb
 
       - name: Update CHANGELOG.md
         run: |
@@ -62,7 +62,7 @@ jobs:
             This PR prepares the release of version ${{ inputs.version }}.
 
             ### Checklist
-            - [ ] Version updated in `lib/better_appgen/version.rb`
+            - [ ] Version updated in `lib/better_app_gen/version.rb`
             - [ ] CHANGELOG.md updated
             - [ ] All tests passing
 

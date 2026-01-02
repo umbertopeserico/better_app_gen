@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterAppgen
+module BetterAppGen
   module Generators
     # Sets up Vite 7 + Tailwind CSS 4 + Stimulus
     class Vite < Base

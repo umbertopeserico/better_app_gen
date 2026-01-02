@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require_relative "lib/better_appgen/version"
+require_relative "lib/better_app_gen/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "better_appgen"
-  spec.version = BetterAppgen::VERSION
+  spec.name = "better_app_gen"
+  spec.version = BetterAppGen::VERSION
   spec.authors = ["Pandev"]
   spec.email = ["info@pandev.it"]
 
   spec.summary = "Rails 8 app generator with Solid Stack, Vite, Tailwind, and Docker"
   spec.description = <<~DESC.gsub("\n", " ").strip
-    BetterAppgen generates production-ready Rails 8 applications with a modern, opinionated stack.
+    BetterAppGen generates production-ready Rails 8 applications with a modern, opinionated stack.
     Features include: Solid Stack (Cache, Queue, Cable) backed by PostgreSQL instead of Redis,
     Vite 7 with Tailwind CSS 4 and Stimulus for frontend, multi-database architecture with
     separate databases for app, cache, queue, and cable, UUID primary keys by default,
@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
     (en, it, de, fr, es, pt, nl, pl, ru, ja, zh), and optional SimpleForm integration with
     Tailwind styling. Get a fully configured Rails 8 app in seconds.
   DESC
-  spec.homepage = "https://github.com/pandev-srl/better_appgen"
+  spec.homepage = "https://github.com/pandev-srl/better_app_gen"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2.0"
 
@@ -31,16 +31,16 @@ Gem::Specification.new do |spec|
   spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.post_install_message = <<~MSG
-    Thanks for installing BetterAppgen!
+    Thanks for installing BetterAppGen!
 
     Quick start:
-      better_appgen new my-app
+      better_app_gen new my-app
 
     For more options:
-      better_appgen help new
+      better_app_gen help new
 
     Check dependencies:
-      better_appgen check
+      better_app_gen check
   MSG
 
   # Specify which files should be added to the gem when it is released.
@@ -49,10 +49,10 @@ Gem::Specification.new do |spec|
       (File.expand_path(f) == __FILE__) ||
         f.start_with?(*%w[bin/ test/ spec/ features/ .git .github appveyor Gemfile])
     end
-  end + Dir["lib/better_appgen/templates/**/*"]
+  end + Dir["lib/better_app_gen/templates/**/*"]
 
   spec.bindir = "exe"
-  spec.executables = ["better_appgen"]
+  spec.executables = ["better_app_gen"]
   spec.require_paths = ["lib"]
 
   # Runtime dependencies
