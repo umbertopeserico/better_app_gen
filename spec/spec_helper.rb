@@ -1,7 +1,16 @@
 # frozen_string_literal: true
 
+require "simplecov"
+SimpleCov.start do
+  add_filter "/spec/"
+  enable_coverage :branch
+end
+
 require "bundler/setup"
 require "better_app_gen"
+
+# Load support files
+Dir[File.join(__dir__, "support", "**", "*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
