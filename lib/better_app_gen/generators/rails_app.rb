@@ -11,7 +11,6 @@ module BetterAppGen
         --skip-action-text
         --skip-active-storage
         --skip-test
-        --skip-thruster
         --skip-ci
         --skip-kamal
         --skip-devcontainer

@@ -9,17 +9,24 @@ module BetterAppGen
         create_directory("script")
 
         create_dockerfile
+        create_dockerfile_prod
         create_compose_files
         create_docker_env
         create_docker_entrypoint
+        create_docker_entrypoint_prod
         create_management_scripts
         create_robots_txt
+        create_deploy_docs
       end
 
       private
 
       def create_dockerfile
         create_file_from_template(".docker/Dockerfile.dev", "docker/Dockerfile.dev.erb")
+      end
+
+      def create_dockerfile_prod
+        create_file_from_template(".docker/Dockerfile.prod", "docker/Dockerfile.prod.erb")
       end
 
       def create_compose_files
@@ -34,6 +41,15 @@ module BetterAppGen
       def create_docker_entrypoint
         create_file_from_template("bin/docker-entrypoint", "bin/docker-entrypoint.erb")
         chmod_executable("bin/docker-entrypoint")
+      end
+
+      def create_docker_entrypoint_prod
+        create_file_from_template("bin/docker-entrypoint.prod", "bin/docker-entrypoint.prod.erb")
+        chmod_executable("bin/docker-entrypoint.prod")
+      end
+
+      def create_deploy_docs
+        create_file_from_template(".docker/DEPLOY.md", "docker/DEPLOY.md.erb")
       end
 
       def create_management_scripts

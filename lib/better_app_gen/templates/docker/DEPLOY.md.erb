@@ -1,0 +1,129 @@
+# Deploy su Dokploy
+
+Guida per configurare il deploy con zero-downtime su Dokploy.
+
+## Prerequisiti
+
+- Dokploy installato e configurato
+- Repository Git accessibile da Dokploy
+- Database PostgreSQL 17+ raggiungibile dalla rete Dokploy
+
+## Creare il Progetto
+
+1. In Dokploy, clicca **Create Project**
+2. Seleziona **Docker** (non Compose)
+3. Collega il repository Git
+
+## Configurazione Build
+
+| Campo           | Valore                    |
+| --------------- | ------------------------- |
+| Dockerfile Path | `.docker/Dockerfile.prod` |
+| Build Context   | `.`                       |
+
+## Variabili d'Ambiente
+
+Configura le seguenti variabili in **Environment**:
+
+```bash
+# Database (tutte puntano allo stesso PostgreSQL, database diversi)
+DATABASE_URL=postgresql://user:password@host:5432/<%= @config.app_name_snake %>_production
+CACHE_DATABASE_URL=postgresql://user:password@host:5432/<%= @config.app_name_snake %>_production_cache
+QUEUE_DATABASE_URL=postgresql://user:password@host:5432/<%= @config.app_name_snake %>_production_queue
+CABLE_DATABASE_URL=postgresql://user:password@host:5432/<%= @config.app_name_snake %>_production_cable
+
+# Rails
+RAILS_ENV=production
+SECRET_KEY_BASE=<genera con: rails secret>
+
+# Opzionali
+RAILS_MAX_THREADS=3
+RAILS_LOG_TO_STDOUT=true
+```
+
+## Zero-Downtime Deployment
+
+Per abilitare il deploy senza downtime:
+
+1. Vai in **Advanced** → **Swarm Settings**
+2. Nella sezione **Health Check**, incolla:
+
+```json
+{
+  "Test": ["CMD", "curl", "-f", "http://localhost:3000/up"],
+  "Interval": 30000000000,
+  "Timeout": 10000000000,
+  "StartPeriod": 60000000000,
+  "Retries": 3
+}
+```
+
+### Spiegazione parametri (in nanosecondi)
+
+| Parametro   | Valore | Descrizione                                |
+| ----------- | ------ | ------------------------------------------ |
+| Interval    | 30s    | Frequenza del check                        |
+| Timeout     | 10s    | Timeout per ogni check                     |
+| StartPeriod | 60s    | Tempo di grazia all'avvio (per migrazioni) |
+| Retries     | 3      | Tentativi prima di considerare unhealthy   |
+
+## Rete
+
+Assicurati che il container possa raggiungere PostgreSQL. Se usi una rete esterna:
+
+1. Vai in **Advanced** → **Network**
+2. Aggiungi la rete dove si trova PostgreSQL (es. `dokploy-network`)
+
+## Primo Deploy
+
+Al primo deploy:
+
+1. Il container eseguirà automaticamente `rails db:prepare`
+2. Questo crea i database e esegue le migrazioni
+3. Verifica i log per eventuali errori
+
+## Deploy Successivi
+
+1. Push sul branch configurato
+2. Dokploy builda la nuova immagine
+3. Avvia il nuovo container
+4. Aspetta che l'health check passi
+5. Rimuove il vecchio container (zero-downtime)
+
+## Architettura
+
+```
+┌─────────────────────────────────────────┐
+│              Container Puma             │
+│                                         │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
+│  │  Rails  │  │  Solid  │  │  Solid  │ │
+│  │   Web   │  │  Queue  │  │  Cable  │ │
+│  └────┬────┘  └────┬────┘  └────┬────┘ │
+│       │            │            │       │
+└───────┼────────────┼────────────┼───────┘
+        │            │            │
+        ▼            ▼            ▼
+┌─────────────────────────────────────────┐
+│           PostgreSQL 17+                │
+│  ┌─────────┐ ┌───────┐ ┌───────┐ ┌────┐│
+│  │ primary │ │ cache │ │ queue │ │cable││
+│  └─────────┘ └───────┘ └───────┘ └────┘│
+└─────────────────────────────────────────┘
+```
+
+## Troubleshooting
+
+### Container non parte
+
+Controlla i log per errori di connessione al database o migrazioni fallite.
+
+### Health check fallisce
+
+- Verifica che la porta 3000 sia esposta
+- Controlla che `/up` risponda (è il Rails health check endpoint)
+- Aumenta `StartPeriod` se le migrazioni sono lente
+
+### Jobs non processati
+
+Verifica che `SOLID_QUEUE_IN_PUMA=true` sia impostato nel Dockerfile (già configurato).

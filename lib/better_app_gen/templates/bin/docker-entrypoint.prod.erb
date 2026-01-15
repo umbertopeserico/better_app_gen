@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+# Remove stale PID
+if [ -f /app/tmp/pids/server.pid ]; then
+  rm -f /app/tmp/pids/server.pid
+fi
+
+# Always run migrations in single-container setup
+echo "Running database migrations..."
+bundle exec rails db:prepare
+
+exec "${@}"

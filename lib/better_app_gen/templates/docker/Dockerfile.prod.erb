@@ -1,0 +1,172 @@
+# syntax=docker/dockerfile:1
+# Production multi-stage Dockerfile for Rails 8.1 with Vite assets
+# Optimized for Alpine Linux with Jemalloc and YJIT
+
+ARG RUBY_VERSION=3.4.7
+ARG NODE_VERSION=24.1.0
+ARG BUNDLER_VERSION=2.7.2
+
+# ==============================================================================
+# Stage 1: Base - Common Ruby runtime with system dependencies
+# ==============================================================================
+FROM ruby:${RUBY_VERSION}-alpine AS base
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    bash \
+    curl \
+    gcompat \
+    imagemagick \
+    imagemagick-libs \
+    jemalloc \
+    jpeg-dev \
+    libheif \
+    libpng-dev \
+    libpq \
+    libwebp \
+    libwebp-tools \
+    postgresql17-client \
+    tzdata \
+    && rm -rf /var/cache/apk/*
+
+# Configure Jemalloc and YJIT
+ENV LD_PRELOAD=/usr/lib/libjemalloc.so.2
+ENV RUBY_YJIT_ENABLE=1
+ENV MALLOC_CONF=dirty_decay_ms:1000,narenas:2,background_thread:true
+
+# Rails production defaults with vendor/bundle path
+ENV RAILS_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_PATH=vendor/bundle \
+    BUNDLE_WITHOUT=development:test
+
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup -g 1000 rails && \
+    adduser -u 1000 -G rails -h /app -D rails
+
+# ==============================================================================
+# Stage 2: Gem Builder - Install Ruby dependencies first
+# ==============================================================================
+FROM base AS gem-builder
+
+# Install build dependencies for native gems
+RUN apk add --no-cache \
+    build-base \
+    git \
+    imagemagick-dev \
+    libheif-dev \
+    libwebp-dev \
+    libxml2-dev \
+    libxslt-dev \
+    postgresql17-dev \
+    yaml-dev
+
+WORKDIR /app
+
+# Copy Gemfile for dependency caching
+COPY Gemfile Gemfile.lock ./
+
+# Install bundler and gems into vendor/bundle
+ARG BUNDLER_VERSION
+RUN gem install bundler -v ${BUNDLER_VERSION} --no-document && \
+    bundle config set --local frozen true && \
+    bundle config set --local path vendor/bundle && \
+    bundle config set --local jobs $(nproc) && \
+    bundle install && \
+    rm -rf vendor/bundle/ruby/*/cache/*.gem && \
+    find vendor/bundle/ruby/*/gems/ -name "*.c" -delete && \
+    find vendor/bundle/ruby/*/gems/ -name "*.o" -delete
+
+# ==============================================================================
+# Stage 3: Node Builder - Build Vite assets (needs gems + full code for Tailwind)
+# ==============================================================================
+FROM base AS node-builder
+
+# Install Node.js from Alpine repos + build dependencies
+RUN apk add --no-cache \
+    build-base \
+    git \
+    nodejs \
+    npm \
+    python3
+
+# Install and enable Corepack for Yarn
+RUN npm install -g corepack && \
+    corepack enable && \
+    corepack prepare yarn@stable --activate
+
+WORKDIR /app
+
+# Copy gems from gem-builder (Tailwind scans gem views for classes)
+COPY --from=gem-builder /app/vendor/bundle /app/vendor/bundle
+
+# Copy package files first for better caching
+COPY package.json yarn.lock .yarnrc.yml ./
+
+# Install Node dependencies
+RUN yarn install --immutable
+
+# Copy ALL application code (Tailwind v4 needs to scan for classes)
+COPY . .
+
+# Build production assets
+# Tailwind v4 will scan app/views, app/helpers, app/controllers, etc.
+RUN yarn build
+
+# ==============================================================================
+# Stage 4: Production - Final optimized image
+# ==============================================================================
+FROM base AS production
+
+WORKDIR /app
+
+# Enable Solid Queue to run inside Puma (single-container deployment)
+ENV SOLID_QUEUE_IN_PUMA=true
+
+# Copy installed gems from gem-builder
+COPY --from=gem-builder /app/vendor/bundle /app/vendor/bundle
+
+# Copy only what Rails needs to run (selective COPY, no rm -rf needed)
+# App directories (excluding app/assets - source files not needed)
+COPY --chown=rails:rails app/controllers app/controllers
+COPY --chown=rails:rails app/helpers app/helpers
+COPY --chown=rails:rails app/jobs app/jobs
+COPY --chown=rails:rails app/mailers app/mailers
+COPY --chown=rails:rails app/models app/models
+COPY --chown=rails:rails app/views app/views
+
+# Core Rails directories
+COPY --chown=rails:rails bin bin
+COPY --chown=rails:rails config config
+COPY --chown=rails:rails db db
+COPY --chown=rails:rails lib lib
+COPY --chown=rails:rails public public
+
+# Copy built assets from node-builder (AFTER public to override)
+COPY --from=node-builder /app/public/assets /app/public/assets
+
+# Root files needed by Rails
+COPY --chown=rails:rails Gemfile Gemfile.lock Rakefile config.ru ./
+
+# Precompile bootsnap for faster boot
+RUN bundle exec bootsnap precompile app/ lib/
+
+# Create required directories with proper ownership
+RUN mkdir -p tmp/pids tmp/cache tmp/sockets log storage && \
+    chown -R rails:rails tmp log storage db
+
+# Copy production entrypoint (with db:prepare support)
+COPY --chown=rails:rails bin/docker-entrypoint.prod /app/bin/docker-entrypoint.prod
+RUN chmod +x /app/bin/docker-entrypoint.prod
+
+# Switch to non-root user
+USER rails
+
+# Expose Rails server port
+EXPOSE 3000
+
+# Set entrypoint and default command
+ENTRYPOINT ["bin/docker-entrypoint.prod"]
+CMD ["bundle", "exec", "thrust", "puma", "-C", "config/puma.rb"]
