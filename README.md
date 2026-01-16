@@ -12,6 +12,7 @@ Generate Rails 8 applications with an opinionated, production-ready stack.
 - **Multi-Database Architecture**: Separate databases for app, cache, queue, and cable
 - **UUID Primary Keys**: By default across all models
 - **Docker Development**: Complete Docker setup for development
+- **Production Docker**: Optimized multi-stage Dockerfile with Thruster, Jemalloc, and YJIT
 - **Configurable Locale**: Support for multiple languages (en, it, de, fr, es, pt, nl, pl, ru, ja, zh)
 
 ## Installation
@@ -80,8 +81,7 @@ my-app/
 │   ├── controllers/
 │   │   └── home_controller.rb
 │   ├── helpers/
-│   │   ├── home_helper.rb
-│   │   └── vite_helper.rb
+│   │   └── home_helper.rb
 │   └── views/
 │       ├── home/
 │       │   └── index.html.erb
@@ -90,6 +90,8 @@ my-app/
 ├── config/
 │   ├── application.rb
 │   ├── database.yml
+│   ├── initializers/
+│   │   └── better_vite_helper.rb
 │   └── routes.rb
 ├── db/
 │   ├── migrate/
@@ -97,13 +99,20 @@ my-app/
 │   ├── queue_migrate/
 │   └── cable_migrate/
 ├── .docker/
-│   └── Dockerfile.dev
+│   ├── Dockerfile.dev
+│   ├── Dockerfile.prod
+│   └── DEPLOY.md
+├── bin/
+│   ├── dev
+│   ├── docker-entrypoint
+│   └── docker-entrypoint.prod
 ├── script/
 │   ├── dc-up
 │   ├── dc-down
 │   ├── dc-shell
 │   └── ...
 ├── compose.yml
+├── compose.runner.yml
 ├── vite.config.js
 ├── postcss.config.js
 ├── Procfile.dev

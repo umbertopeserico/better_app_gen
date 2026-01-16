@@ -46,9 +46,9 @@ bundle exec bin/better_app_gen check
 ### Generators (`lib/better_app_gen/generators/`)
 Each generator inherits from `Base` and implements `generate!`:
 - `rails_app.rb` - Creates base Rails app with `rails new`
-- `gemfile.rb` - Adds gems (solid_cache, solid_queue, solid_cable, vite_rails, etc.)
+- `gemfile.rb` - Adds gems (solid_cache, solid_queue, solid_cable, better_vite_helper, etc.)
 - `database.rb` - Multi-database config (primary, cache, queue, cable)
-- `solid_stack.rb` - Solid Cache/Queue/Cable migrations
+- `solid_stack.rb` - Solid Cache/Queue/Cable configuration in config/application.rb
 - `vite.rb` - Vite + Tailwind CSS + Stimulus setup
 - `home_controller.rb` - HomeController with root route
 - `locale.rb` - i18n configuration
