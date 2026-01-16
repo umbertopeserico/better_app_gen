@@ -56,12 +56,62 @@ Capybara/RSpec:
 Capybara/RSpec/PredicateMatcher:
   Enabled: false
 
+# Override deprecated RSpec/Capybara/* cops (now Capybara/*)
+Capybara/CurrentPathExpectation:
+  Enabled: false
+Capybara/MatchStyle:
+  Enabled: false
+Capybara/NegationMatcher:
+  Enabled: false
+Capybara/SpecificActions:
+  Enabled: false
+Capybara/SpecificFinders:
+  Enabled: false
+Capybara/SpecificMatcher:
+  Enabled: false
+Capybara/VisibilityMatcher:
+  Enabled: false
+
 # Disable FactoryBot cops (not used)
 FactoryBot:
   Enabled: false
 
+# Override deprecated RSpec/FactoryBot/* cops (now FactoryBot/*)
+FactoryBot/AttributeDefinedStatically:
+  Enabled: false
+FactoryBot/ConsistentParenthesesStyle:
+  Enabled: false
+FactoryBot/CreateList:
+  Enabled: false
+FactoryBot/FactoryClassName:
+  Enabled: false
+FactoryBot/FactoryNameStyle:
+  Enabled: false
+FactoryBot/IdSequence:
+  Enabled: false
+FactoryBot/RedundantFactoryOption:
+  Enabled: false
+FactoryBot/SyntaxMethods:
+  Enabled: false
+
 # Disable RSpec/Rails cops (not a Rails app)
 RSpecRails:
+  Enabled: false
+
+# Override deprecated RSpec/Rails/* cops (now RSpecRails/*)
+RSpecRails/AvoidSetupHook:
+  Enabled: false
+RSpecRails/HaveHttpStatus:
+  Enabled: false
+RSpecRails/HttpStatus:
+  Enabled: false
+RSpecRails/InferredSpecType:
+  Enabled: false
+RSpecRails/MinitestAssertions:
+  Enabled: false
+RSpecRails/NegationBeValid:
+  Enabled: false
+RSpecRails/TravelAround:
   Enabled: false
 
 # Allow longer parameter lists for configuration objects
