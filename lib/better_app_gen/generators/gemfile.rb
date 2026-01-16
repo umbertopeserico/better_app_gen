@@ -11,7 +11,8 @@ module BetterAppGen
       ].freeze
 
       BASE_GEMS = [
-        'gem "rails-i18n"'
+        'gem "rails-i18n"',
+        'gem "better_vite_helper"'
       ].freeze
 
       def generate!

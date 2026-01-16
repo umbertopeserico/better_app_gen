@@ -3,7 +3,7 @@
 require "tmpdir"
 require "fileutils"
 
-RSpec.shared_context "generator setup" do
+RSpec.shared_context "with generator setup" do
   let(:tmp_dir) { Dir.mktmpdir }
   let(:app_path) { File.join(tmp_dir, "test_app") }
   let(:config) do
@@ -41,5 +41,5 @@ RSpec.shared_context "generator setup" do
 end
 
 RSpec.configure do |config|
-  config.include_context "generator setup", :generator
+  config.include_context "with generator setup", :generator
 end

@@ -53,7 +53,7 @@ RSpec.describe BetterAppGen::DependencyChecker do
     context "when run in the test environment" do
       it "returns a boolean" do
         result = checker.check_all
-        expect([true, false]).to include(result)
+        expect(result).to be(true).or be(false)
       end
 
       it "populates @results for missing_dependencies" do

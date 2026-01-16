@@ -29,8 +29,8 @@ RSpec.describe BetterAppGen::Generators::Vite, :generator do
         expect(File.directory?(file_path("app/assets/images"))).to be true
       end
 
-      it "creates app/assets/javascripts/controllers directory" do
-        expect(File.directory?(file_path("app/assets/javascripts/controllers"))).to be true
+      it "creates app/javascript/controllers directory" do
+        expect(File.directory?(file_path("app/javascript/controllers"))).to be true
       end
 
       it "creates app/assets/stylesheets directory" do
@@ -95,30 +95,32 @@ RSpec.describe BetterAppGen::Generators::Vite, :generator do
 
     describe "JavaScript files" do
       it "creates application.js" do
-        expect(file_exists?("app/assets/javascripts/application.js")).to be true
+        expect(file_exists?("app/javascript/application.js")).to be true
       end
 
       it "creates controllers/application.js" do
-        expect(file_exists?("app/assets/javascripts/controllers/application.js")).to be true
+        expect(file_exists?("app/javascript/controllers/application.js")).to be true
       end
 
       it "creates controllers/hello_controller.js" do
-        expect(file_exists?("app/assets/javascripts/controllers/hello_controller.js")).to be true
+        expect(file_exists?("app/javascript/controllers/hello_controller.js")).to be true
       end
 
       it "creates controllers/index.js" do
-        expect(file_exists?("app/assets/javascripts/controllers/index.js")).to be true
+        expect(file_exists?("app/javascript/controllers/index.js")).to be true
       end
     end
 
-    describe "Vite helper" do
-      it "creates vite_helper.rb" do
-        expect(file_exists?("app/helpers/vite_helper.rb")).to be true
+    describe "BetterViteHelper initializer" do
+      it "creates better_vite_helper.rb initializer" do
+        expect(file_exists?("config/initializers/better_vite_helper.rb")).to be true
       end
 
-      it "defines ViteHelper module" do
-        content = read_generated_file("app/helpers/vite_helper.rb")
-        expect(content).to include("module ViteHelper")
+      it "configures BetterViteHelper with dev_server_url" do
+        content = read_generated_file("config/initializers/better_vite_helper.rb")
+        expect(content).to include("BetterViteHelper.configure")
+        expect(content).to include("config.dev_server_url")
+        expect(content).to include(config.vite_port.to_s)
       end
     end
 

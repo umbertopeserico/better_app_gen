@@ -14,7 +14,7 @@ RSpec.describe BetterAppGen do
 
   describe BetterAppGen::DependencyError do
     it "is a BetterAppGen::Error" do
-      error = described_class.new(["ruby"])
+      error = described_class.new([ "ruby" ])
       expect(error).to be_a(BetterAppGen::Error)
     end
 
@@ -29,7 +29,7 @@ RSpec.describe BetterAppGen do
     end
 
     it "handles single dependency" do
-      error = described_class.new(["psql"])
+      error = described_class.new([ "psql" ])
       expect(error.message).to eq("Missing required dependencies: psql")
     end
   end

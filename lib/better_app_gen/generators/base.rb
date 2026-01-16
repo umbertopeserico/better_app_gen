@@ -142,9 +142,9 @@ module BetterAppGen
 
         package_data = if File.exist?(package_path)
                          JSON.parse(File.read(package_path))
-                       else
+        else
                          { "name" => app_name_dash, "private" => true }
-                       end
+        end
 
         # Merge dependencies
         package_data["dependencies"] ||= {}

@@ -23,6 +23,7 @@ RSpec.describe BetterAppGen::Generators::Gemfile, :generator do
 
     it "defines BASE_GEMS" do
       expect(described_class::BASE_GEMS).to include('gem "rails-i18n"')
+      expect(described_class::BASE_GEMS).to include('gem "better_vite_helper"')
     end
   end
 
@@ -49,6 +50,12 @@ RSpec.describe BetterAppGen::Generators::Gemfile, :generator do
       generator.generate!
       content = read_generated_file("Gemfile")
       expect(content).to include('gem "rails-i18n"')
+    end
+
+    it "adds better_vite_helper gem" do
+      generator.generate!
+      content = read_generated_file("Gemfile")
+      expect(content).to include('gem "better_vite_helper"')
     end
 
     context "without simple_form" do

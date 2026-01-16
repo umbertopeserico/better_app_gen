@@ -5,8 +5,8 @@ require_relative "lib/better_app_gen/version"
 Gem::Specification.new do |spec|
   spec.name = "better_app_gen"
   spec.version = BetterAppGen::VERSION
-  spec.authors = ["Pandev"]
-  spec.email = ["info@pandev.it"]
+  spec.authors = [ "Pandev" ]
+  spec.email = [ "info@pandev.it" ]
 
   spec.summary = "Rails 8 app generator with Solid Stack, Vite, Tailwind, and Docker"
   spec.description = <<~DESC.gsub("\n", " ").strip
@@ -52,8 +52,8 @@ Gem::Specification.new do |spec|
   end + Dir["lib/better_app_gen/templates/**/*"]
 
   spec.bindir = "exe"
-  spec.executables = ["better_app_gen"]
-  spec.require_paths = ["lib"]
+  spec.executables = [ "better_app_gen" ]
+  spec.require_paths = [ "lib" ]
 
   # Runtime dependencies
   spec.add_dependency "pastel", "~> 0.8"

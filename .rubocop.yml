@@ -1,3 +1,5 @@
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
 require:
   - rubocop-rspec
 
@@ -76,3 +78,7 @@ Metrics/PerceivedComplexity:
 # Allow predicate names without ?
 Naming/PredicateMethod:
   Enabled: false
+
+# Allow more memoized helpers for orchestrator tests that need many mocks
+RSpec/MultipleMemoizedHelpers:
+  Max: 12

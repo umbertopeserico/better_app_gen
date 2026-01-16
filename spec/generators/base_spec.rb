@@ -65,11 +65,11 @@ RSpec.describe BetterAppGen::Generators::Base, :generator do
     end
 
     it "delegates with_simple_form" do
-      expect([true, false]).to include(generator.with_simple_form)
+      expect(generator.with_simple_form).to be(true).or be(false)
     end
 
     it "delegates skip_docker" do
-      expect([true, false]).to include(generator.skip_docker)
+      expect(generator.skip_docker).to be(true).or be(false)
     end
 
     it "delegates app_path" do
@@ -269,20 +269,20 @@ RSpec.describe BetterAppGen::Generators::Base, :generator do
     end
 
     it "adds new gems before development group" do
-      generator.merge_gemfile(['gem "solid_cache"'])
+      generator.merge_gemfile([ 'gem "solid_cache"' ])
       content = File.read(file_path("Gemfile"))
       expect(content).to include('gem "solid_cache"')
       expect(content.index('gem "solid_cache"')).to be < content.index("group :development")
     end
 
     it "does not duplicate existing gems" do
-      generator.merge_gemfile(['gem "rails"'])
+      generator.merge_gemfile([ 'gem "rails"' ])
       content = File.read(file_path("Gemfile"))
       expect(content.scan('gem "rails"').count).to eq(1)
     end
 
     it "adds multiple gems" do
-      generator.merge_gemfile(['gem "solid_cache"', 'gem "solid_queue"'])
+      generator.merge_gemfile([ 'gem "solid_cache"', 'gem "solid_queue"' ])
       content = File.read(file_path("Gemfile"))
       expect(content).to include('gem "solid_cache"')
       expect(content).to include('gem "solid_queue"')
@@ -298,7 +298,7 @@ RSpec.describe BetterAppGen::Generators::Base, :generator do
     end
 
     it "appends gems at end" do
-      generator.merge_gemfile(['gem "new_gem"'])
+      generator.merge_gemfile([ 'gem "new_gem"' ])
       content = File.read(file_path("Gemfile"))
       expect(content).to include('gem "new_gem"')
     end

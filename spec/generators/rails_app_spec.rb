@@ -72,9 +72,10 @@ RSpec.describe BetterAppGen::Generators::RailsApp, :generator do
 
       it "calls rails new with correct flags" do
         expected_command = "rails new test_app #{described_class::SKIP_FLAGS.join(" ")}"
-        expect(generator).to receive(:system).with(expected_command).and_return(true)
+        allow(generator).to receive(:system).with(expected_command).and_return(true)
 
         generator.generate!
+        expect(generator).to have_received(:system).with(expected_command)
       end
     end
 

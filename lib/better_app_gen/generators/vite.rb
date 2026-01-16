@@ -29,7 +29,7 @@ module BetterAppGen
         create_postcss_config
         create_stylesheets
         create_javascript
-        create_vite_helper
+        create_initializer
         create_procfile
         create_bin_dev
         create_yarnrc
@@ -42,7 +42,7 @@ module BetterAppGen
 
       def setup_directories
         create_directory("app/assets/images")
-        create_directory("app/assets/javascripts/controllers")
+        create_directory("app/javascript/controllers")
         create_directory("app/assets/stylesheets")
 
         # Remove default application.css if exists
@@ -78,16 +78,17 @@ module BetterAppGen
       end
 
       def create_javascript
-        create_file_from_template("app/assets/javascripts/application.js", "vite/application.js.erb")
-        create_file_from_template("app/assets/javascripts/controllers/application.js",
+        create_file_from_template("app/javascript/application.js", "vite/application.js.erb")
+        create_file_from_template("app/javascript/controllers/application.js",
                                   "vite/controllers/application.js.erb")
-        create_file_from_template("app/assets/javascripts/controllers/hello_controller.js",
+        create_file_from_template("app/javascript/controllers/hello_controller.js",
                                   "vite/controllers/hello_controller.js.erb")
-        create_file_from_template("app/assets/javascripts/controllers/index.js", "vite/controllers/index.js.erb")
+        create_file_from_template("app/javascript/controllers/index.js", "vite/controllers/index.js.erb")
       end
 
-      def create_vite_helper
-        create_file_from_template("app/helpers/vite_helper.rb", "vite/vite_helper.rb.erb")
+      def create_initializer
+        create_file_from_template("config/initializers/better_vite_helper.rb",
+                                  "config/initializers/better_vite_helper.rb.erb")
       end
 
       def create_procfile

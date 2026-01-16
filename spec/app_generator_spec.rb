@@ -54,38 +54,38 @@ RSpec.describe BetterAppGen::AppGenerator, :generator do
 
   describe "#generate!" do
     it "runs RailsApp generator" do
-      expect(mock_rails_app).to receive(:generate!)
       generator.generate!
+      expect(mock_rails_app).to have_received(:generate!)
     end
 
     it "runs Gemfile generator" do
-      expect(mock_gemfile).to receive(:generate!)
       generator.generate!
+      expect(mock_gemfile).to have_received(:generate!)
     end
 
     it "runs Database generator" do
-      expect(mock_database).to receive(:generate!)
       generator.generate!
+      expect(mock_database).to have_received(:generate!)
     end
 
     it "runs SolidStack generator" do
-      expect(mock_solid_stack).to receive(:generate!)
       generator.generate!
+      expect(mock_solid_stack).to have_received(:generate!)
     end
 
     it "runs Vite generator" do
-      expect(mock_vite).to receive(:generate!)
       generator.generate!
+      expect(mock_vite).to have_received(:generate!)
     end
 
     it "runs HomeController generator" do
-      expect(mock_home_controller).to receive(:generate!)
       generator.generate!
+      expect(mock_home_controller).to have_received(:generate!)
     end
 
     it "runs Locale generator" do
-      expect(mock_locale).to receive(:generate!)
       generator.generate!
+      expect(mock_locale).to have_received(:generate!)
     end
 
     context "with Docker enabled (default)" do
@@ -98,8 +98,8 @@ RSpec.describe BetterAppGen::AppGenerator, :generator do
       end
 
       it "runs Docker generator" do
-        expect(mock_docker).to receive(:generate!)
         generator.generate!
+        expect(mock_docker).to have_received(:generate!)
       end
     end
 
@@ -113,8 +113,8 @@ RSpec.describe BetterAppGen::AppGenerator, :generator do
       end
 
       it "skips Docker generator" do
-        expect(mock_docker).not_to receive(:generate!)
         generator.generate!
+        expect(mock_docker).not_to have_received(:generate!)
       end
     end
 
@@ -128,8 +128,8 @@ RSpec.describe BetterAppGen::AppGenerator, :generator do
       end
 
       it "runs SimpleForm generator" do
-        expect(mock_simple_form).to receive(:generate!)
         generator.generate!
+        expect(mock_simple_form).to have_received(:generate!)
       end
     end
 
@@ -143,8 +143,8 @@ RSpec.describe BetterAppGen::AppGenerator, :generator do
       end
 
       it "skips SimpleForm generator" do
-        expect(mock_simple_form).not_to receive(:generate!)
         generator.generate!
+        expect(mock_simple_form).not_to have_received(:generate!)
       end
     end
 

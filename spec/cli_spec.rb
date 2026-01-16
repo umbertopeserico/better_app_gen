@@ -48,7 +48,7 @@ RSpec.describe BetterAppGen::CLI do
 
     context "with invalid app name" do
       it "exits with error for app name starting with number" do
-        expect { cli.invoke(:new, ["123app"]) }.to raise_error(SystemExit)
+        expect { cli.invoke(:new, [ "123app" ]) }.to raise_error(SystemExit)
       end
     end
 
@@ -59,7 +59,7 @@ RSpec.describe BetterAppGen::CLI do
           FileUtils.mkdir_p(existing_app)
 
           Dir.chdir(dir) do
-            expect { cli.invoke(:new, ["existing_app"]) }.to raise_error(SystemExit)
+            expect { cli.invoke(:new, [ "existing_app" ]) }.to raise_error(SystemExit)
           end
         end
       end
@@ -67,13 +67,13 @@ RSpec.describe BetterAppGen::CLI do
 
     context "when dependencies are missing" do
       before do
-        allow(mock_checker).to receive_messages(check_all: false, missing_dependencies: ["node"])
+        allow(mock_checker).to receive_messages(check_all: false, missing_dependencies: [ "node" ])
       end
 
       it "exits with error" do
         Dir.mktmpdir do |dir|
           Dir.chdir(dir) do
-            expect { cli.invoke(:new, ["new_app"]) }.to raise_error(SystemExit)
+            expect { cli.invoke(:new, [ "new_app" ]) }.to raise_error(SystemExit)
           end
         end
       end
@@ -83,8 +83,8 @@ RSpec.describe BetterAppGen::CLI do
       it "creates the application" do
         Dir.mktmpdir do |dir|
           Dir.chdir(dir) do
-            expect(mock_generator).to receive(:generate!)
-            expect { cli.invoke(:new, ["valid_app"]) }.to output(/created successfully/).to_stdout
+            expect { cli.invoke(:new, [ "valid_app" ]) }.to output(/created successfully/).to_stdout
+            expect(mock_generator).to have_received(:generate!)
           end
         end
       end
@@ -92,7 +92,7 @@ RSpec.describe BetterAppGen::CLI do
       it "shows next steps for Docker mode" do
         Dir.mktmpdir do |dir|
           Dir.chdir(dir) do
-            expect { cli.invoke(:new, ["docker_app"]) }.to output(/dc-up/).to_stdout
+            expect { cli.invoke(:new, [ "docker_app" ]) }.to output(/dc-up/).to_stdout
           end
         end
       end
@@ -102,7 +102,7 @@ RSpec.describe BetterAppGen::CLI do
         Dir.mktmpdir do |dir|
           Dir.chdir(dir) do
             # Use direct invocation with options
-            expect { cli.invoke(:new, ["non_docker_app"], skip_docker: true) }
+            expect { cli.invoke(:new, [ "non_docker_app" ], skip_docker: true) }
               .to output(/bundle install/).to_stdout
           end
         end
@@ -114,7 +114,7 @@ RSpec.describe BetterAppGen::CLI do
         cli.options = { locale: "de", rails_port: 3000, vite_port: 5173, skip_docker: false, with_simple_form: false }
         Dir.mktmpdir do |dir|
           Dir.chdir(dir) do
-            expect { cli.invoke(:new, ["german_app"], locale: "de") }
+            expect { cli.invoke(:new, [ "german_app" ], locale: "de") }
               .to output(/does not include translation files/).to_stdout
           end
         end
